@@ -3,25 +3,6 @@ import { z } from "zod";
 
 const handler = createMcpHandler(
   server => {
-    server.tool(
-      "courseRecommender",
-      "Give course recommendation based on user's interests",
-      {
-        experienceLevel: z.enum(["beginner", "intermediate", "advanced"]),
-      },
-      ({ experienceLevel }) => ({
-        content: [
-          {
-            type: "text",
-            text: `I recommend you take the following courses for ${
-              experienceLevel === "beginner"
-                ? "Professional Javascript"
-                : "Professional React and Jext.js"
-            } course.`,
-          },
-        ],
-      })
-    )
 
     server.tool(
       "toDoGenerator",
@@ -46,9 +27,6 @@ const handler = createMcpHandler(
   {
     capabilities: {
       tools: {
-        courseRecommender: {
-          description: "Give course recommendation based on user's interests",
-        },
         toDoGenerator: {
           description: "Handle ToDos in this application using the text that the user is providing"
         }

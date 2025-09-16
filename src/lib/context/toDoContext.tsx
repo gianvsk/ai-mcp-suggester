@@ -1,19 +1,14 @@
 "use client";
 
 import { createContext, useState, useCallback, useMemo } from "react";
+import type { ToDo } from "../schemas/toDo";
 
 export type ListContextType = {
   list: ToDo[] | [];
   selected: ToDo[] | [];
-  addElement: (value: string) => void;
-  removeElement: (value: number) => void;
-  toggleSelection: (value: number) => void;
-};
-
-export type ToDo = {
-  id: number;
-  text: string;
-  done: boolean;
+  addElement: (value: ToDo['id']) => void;
+  removeElement: (value: ToDo['id']) => void;
+  toggleSelection: (value: ToDo['id']) => void;
 };
 
 export const ToDoContext = createContext<ListContextType | undefined>(
@@ -24,23 +19,23 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
   const [list, setList] = useState<ToDo[]>([]);
   const [selected, setSelected] = useState<ToDo[]>([]);
 
-  const addElement = useCallback((value: string) => {
-    if (value.trim().length > 0)
+  const addElement = useCallback((value: ToDo['id'])=> {
+      const sanitizedValue = String(value).trim();
       setList(prev => {
         const newElement: ToDo = {
           id: prev.length,
-          text: value && value.trim().length > 0 ? value : "No text",
+          text: sanitizedValue.length > 0 ? String(value) : "No text",
           done: false,
         };
         return [...prev, newElement];
       });
   }, []);
 
-  const removeElement = useCallback((id: number) => {
-    setList(prev => prev.filter(el => el.id !== id));
+  const removeElement = useCallback((id: ToDo['id']) => {
+    setList(prev => prev.filter(el => el.id != id));
   }, []);
 
-  const toggleSelection = useCallback((id: number) => {
+  const toggleSelection = useCallback((id: ToDo['id']) => {
     setList(prev =>
       prev.map(el => (id === el.id ? { ...el, done: !el.done } : { ...el }))
     );

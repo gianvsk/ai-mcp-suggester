@@ -1,6 +1,6 @@
 {
 	"servers": {
-		"my-mcp-server-f8e9b56a": {
+		"my-mcp-server-c8f34441": {
 			"url": "https://ai-mcp-suggester.vercel.app/mcp",
 			"type": "http"
 		}

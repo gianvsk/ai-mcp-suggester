@@ -1,6 +1,6 @@
 "use client";
 
-import { ToDo } from "@/lib/context/toDoContext";
+import type { ToDo } from "@/lib/schemas/toDo";
 import { memo } from "react";
 
 export const SingleElement = memo(function SingleElement({
@@ -9,8 +9,8 @@ export const SingleElement = memo(function SingleElement({
   onRemove,
 }: {
   body: ToDo;
-  onToggle: (value: number) => void;
-  onRemove: (value: number) => void;
+  onToggle: (value: ToDo['id']) => void;
+  onRemove: (value: ToDo['id']) => void;
 }) {
 
   const isDone = !!body.done;
