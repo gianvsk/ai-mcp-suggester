@@ -80,42 +80,6 @@ export const McpTodoClient = () => {
     return () => clearInterval(interval);
   }, [autoRefresh, isConnected, isPending, loadTodos]);
 
-  const createTodo = async () => {
-    if (!client) return;
-    
-    const currentText = newTodoText;
-    const optimisticTodo: ToDo = {
-      id: uuid(),
-      text: currentText.trim() || 'Test ' + Math.floor(Math.random() * 10000),
-      done: false
-    };
-    
-    startTransition(async () => {
-      try {
-        setTodos(prev => [...prev, optimisticTodo]);
-
-        await client.callTool({
-          name: "toDoGenerator",
-          arguments: {
-            toDoBody: {
-              id: optimisticTodo.id,
-              text: optimisticTodo.text,
-              done: false
-            }
-          }
-        });
-        
-        const updatedTodos = await getAllTodos();
-        setTodos(updatedTodos);
-        
-      } catch (error) {
-        console.error("Errore nella creazione del todo:", error);
-        setTodos(prev => prev.filter(todo => todo.id !== optimisticTodo.id));
-        setNewTodoText(currentText);
-      }
-    });
-  };
-
   const toggleTodoStatus = async (todoId: ToDo["id"]) => {
     if (!client) return;
     
@@ -158,25 +122,6 @@ export const McpTodoClient = () => {
             Auto-refresh (3s)
           </label>
         </div>
-      </div>
-
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={newTodoText}
-          onChange={(e) => setNewTodoText(e.target.value)}
-          placeholder="Inserisci un nuovo todo..."
-          className="flex-1 px-3 py-2 border rounded text-black"
-          onKeyPress={(e) => e.key === 'Enter' && createTodo()}
-          disabled={isPending}
-        />
-        <button
-          onClick={createTodo}
-          disabled={!isConnected || isPending}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
-        >
-          {isPending ? 'Creando...' : 'Aggiungi Todo'}
-        </button>
       </div>
 
       <div className="flex gap-2 items-center">

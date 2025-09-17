@@ -6,12 +6,12 @@ export default function Home() {
 
   return (
     <GeneralContext>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 py-8 px-8">
         <h1>This is a To Do Generator with MCP</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Vecchio Sistema (Context)</h2>
+          <div className="flex flex-col">
+            <h2 className="text-lg font-semibold mb-4">Sistema manuale</h2>
             <GeneratorContainer />
           </div>
           

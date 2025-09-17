@@ -8,10 +8,10 @@ export const List = () => {
   const { list, removeElement, toggleSelection } = useToDo()
 
   return (
-      <ul className="text-white">
+      <ul className="text-white flex flex-col gap-3">
         {list.length > 0 &&
           list.map(el => (
-            <li key={el.id} className="border-white rounded-xl px-3 py-2 w-max border">
+            <li key={el.id} className="border-white rounded-xl px-3 py-2 whitespace-break-spaces border">
               <SingleElement body={el} onToggle={toggleSelection} onRemove={removeElement} />
             </li>
           ))}
