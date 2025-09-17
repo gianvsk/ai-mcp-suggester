@@ -1,5 +1,10 @@
 import { createMcpHandler } from "mcp-handler";
-import { addTodo, getAllTodos, removeTodo, toggleTodo } from "@/app/actions/todos";
+import {
+  addTodo,
+  getAllTodos,
+  removeTodo,
+  toggleTodo,
+} from "@/app/actions/todos";
 import { todoSchema } from "@/lib/schemas/toDo";
 
 const handler = createMcpHandler(
@@ -8,7 +13,7 @@ const handler = createMcpHandler(
       "toDoGenerator",
       "Handle ToDos in this application using the text that the user is providing",
       {
-        toDoBody: todoSchema
+        toDoBody: todoSchema,
       },
       async ({ toDoBody }) => {
         const { id, text } = toDoBody;
@@ -45,13 +50,13 @@ const handler = createMcpHandler(
       "removeToDo",
       "Remove a todo from the database",
       {
-        toDoBody: todoSchema
+        toDoBody: todoSchema,
       },
       async ({ toDoBody }) => {
         const { text, id, done } = toDoBody;
 
         try {
-           await removeTodo(id);
+          await removeTodo(id);
 
           return {
             content: [
@@ -79,13 +84,13 @@ const handler = createMcpHandler(
       "toggleToDo",
       "Toggle a todo's completion status",
       {
-        toDoBody: todoSchema
+        toDoBody: todoSchema,
       },
       async ({ toDoBody }) => {
         const { text, id, done } = toDoBody;
 
         try {
-           await toggleTodo(id);
+          await toggleTodo(id);
 
           return {
             content: [
@@ -108,14 +113,12 @@ const handler = createMcpHandler(
         }
       }
     );
-    
+
     server.tool(
       "getAllToDos",
       "Get all the todos stored in the database",
-      {
-      },
+      {},
       async () => {
-
         try {
           const todoList = await getAllTodos();
 
@@ -149,8 +152,13 @@ const handler = createMcpHandler(
             "Handle ToDos in this application using the text that the user is providing",
         },
         getAllToDos: {
-          description:
-            "Get all the todos stored in the database",
+          description: "Get all the todos stored in the database",
+        },
+        removeToDo: {
+          description: "Remove a todo from the database",
+        },
+        toggleToDo: {
+          description: "Toggle a todo's completion status",
         },
       },
     },
