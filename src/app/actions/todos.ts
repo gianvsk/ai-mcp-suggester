@@ -2,9 +2,10 @@
 
 import { ToDo, todoSchema } from "@/lib/schemas/toDo";
 import redis from "@/lib/plugin/redis-client";
+import { v4 as uuid } from "uuid";
 
 export const addTodo = async (value: ToDo) => {
-  const id = Date.now().toString();
+  const id = uuid()
   await redis.set(`todo:${id}`, JSON.stringify({ ...value }));
   return { value };
 };

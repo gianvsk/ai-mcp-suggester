@@ -22,9 +22,14 @@ const handler = createMcpHandler(
             done: toDoBody.done
           };
           
-          await addTodo(todo);
+          const isElementAdded = await addTodo(todo);
+          if (!isElementAdded) {
+            throw new Error('Failed to add ToDo');
+          }
           const allTodos = await getAllTodos();
-          
+          if (!allTodos) {
+            throw new Error('Failed to fetch all ToDos');
+          }
           return {
             content: [
               {
@@ -58,10 +63,9 @@ const handler = createMcpHandler(
   },
   {
     redisUrl: process.env.REDIS_URL,
-    sseEndpoint: "/sse",
-    streamableHttpEndpoint: "/mcp",
+    basePath: "/",
     verboseLogs: true,
-    maxDuration: 60,
+    maxDuration: 300, 
   }
 );
 
