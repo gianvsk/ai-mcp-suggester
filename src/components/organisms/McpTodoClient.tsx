@@ -68,7 +68,6 @@ export const McpTodoClient = () => {
     initializeClient();
   }, [loadTodos]);
 
-  // Auto-refresh per catturare todos creati esternamente
   useEffect(() => {
     if (!autoRefresh) return;
 
@@ -94,19 +93,17 @@ export const McpTodoClient = () => {
     startTransition(async () => {
       try {
         setTodos(prev => [...prev, optimisticTodo]);
-        setNewTodoText("");
 
-        const result = await client.callTool({
+        await client.callTool({
           name: "toDoGenerator",
           arguments: {
             toDoBody: {
+              id: optimisticTodo.id,
               text: optimisticTodo.text,
               done: false
             }
           }
         });
-        
-        console.log("Todo creato tramite MCP:", result);
         
         const updatedTodos = await getAllTodos();
         setTodos(updatedTodos);

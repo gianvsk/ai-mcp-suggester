@@ -1,5 +1,5 @@
 import { GeneratorContainer } from "@/components/organisms/GeneratorContainer";
-import { McpTodoClient } from "@/components/McpTodoClient";
+import { McpTodoClient } from "@/components/organisms/McpTodoClient";
 import { GeneralContext } from "@/lib/context/toDoContext";
 
 export default function Home() {

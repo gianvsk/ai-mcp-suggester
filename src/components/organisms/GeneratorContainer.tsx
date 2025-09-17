@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react";
 import { List } from "../molecules/List";
 import { useToDo } from "@/app/hooks/useToDo";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { todoSchema } from "@/lib/schemas/toDo";
 
 export const GeneratorContainer = () => {
   const [text, setText] = useState("");
@@ -13,28 +10,6 @@ export const GeneratorContainer = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-/*       const transport = new SSEClientTransport(new URL(`${origin}/sse`));
-
-      console.log("transport", transport);
-
-      const client = new Client(
-        {
-          name: "example-client",
-          version: "1.0.0",
-        },
-        {
-          capabilities: {
-            prompts: {},
-            resources: {},
-            tools: {},
-          },
-        }
-      );
-
-      await client.connect(transport);
-
-      const result = await client.request("getAllToDos", todoSchema);
-      console.log("result", result); */
       await fetchToDoList();
     };
     fetchData();

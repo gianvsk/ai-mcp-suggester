@@ -3,7 +3,7 @@
 import { createContext, useState, useCallback, useMemo } from "react";
 import type { ToDo } from "../schemas/toDo";
 import { v4 as uuid } from "uuid";
-import { addTodo, getAllTodos } from "@/app/actions/todos";
+import { addTodo, removeTodo, toggleTodo, getAllTodos } from "@/app/actions/todos";
 
 export type ListContextType = {
   list: ToDo[] | [];
@@ -49,51 +49,32 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const removeElement = useCallback(async (id: ToDo["id"]) => {
-    /*     try {
-      const response = await fetch('/api/todos', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to remove todo');
-      }
-
-      const data = await response.json();
-      setList(data.todos);
+    const selectedItem = list.find(el => el.id === id);
+    setList(prev => prev.filter(el => el.id !== id));
+    
+    try {
+      await removeTodo(id)
     } catch (error) {
       console.error('Error removing todo:', error);
-      // Fallback alla logica locale
-      setList(prev => prev.filter(el => el.id !== id));
-    } */
-  }, []);
+      if(!selectedItem) return;
+      setList(prev => [...prev, selectedItem]);
+    } finally {
+      const todosList = await getAllTodos();
+      setList(todosList)
+    }
+  }, [list]);
 
   const toggleSelection = useCallback(async (id: ToDo["id"]) => {
-    /*     try {
-      const response = await fetch('/api/todos', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, action: 'toggle' })
-      });
+    setList(prev => prev.map(el => (id === el.id ? { ...el, done: !el.done } : { ...el })));
 
-      if (!response.ok) {
-        throw new Error('Failed to toggle todo');
-      }
-
-      const data = await response.json();
-      setList(data.todos);
+    try {
+      await toggleTodo(id);
     } catch (error) {
       console.error('Error toggling todo:', error);
-      // Fallback alla logica locale
       setList(prev =>
         prev.map(el => (id === el.id ? { ...el, done: !el.done } : { ...el }))
       );
-    } */
+    }
   }, []);
 
   const fetchToDoList = useCallback(async () => {

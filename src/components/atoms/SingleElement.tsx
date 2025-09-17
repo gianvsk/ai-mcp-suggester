@@ -13,6 +13,8 @@ export const SingleElement = memo(function SingleElement({
   onRemove: (value: ToDo['id']) => void;
 }) {
 
+  console.log('body', !!body.done)
+
   const isDone = !!body.done;
 
   return (
