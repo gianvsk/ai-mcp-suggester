@@ -4,14 +4,13 @@ import { addTodo, getAllTodos } from "@/app/actions/todos";
 
 const handler = createMcpHandler(
   server => {
-
     server.tool(
       "toDoGenerator",
       "Handle ToDos in this application using the text that the user is providing",
       {
         toDoBody: z.object({
           text: z.string(),
-          done: z.boolean()
+          done: z.boolean(),
         }),
       },
       async ({ toDoBody }) => {
@@ -19,12 +18,12 @@ const handler = createMcpHandler(
           const todo = {
             id: Date.now().toString(),
             text: toDoBody.text,
-            done: toDoBody.done
+            done: toDoBody.done,
           };
-          
+
           const addedToDo = await addTodo(todo);
           if (!addedToDo) {
-            throw new Error('Failed to add ToDo');
+            throw new Error("Failed to add ToDo");
           }
 
           const todoList = await getAllTodos();
@@ -38,7 +37,7 @@ const handler = createMcpHandler(
             ],
           };
         } catch (error) {
-          console.error('Error in toDoGenerator:', error);
+          console.error("Error in toDoGenerator:", error);
           return {
             content: [
               {
@@ -49,22 +48,23 @@ const handler = createMcpHandler(
           };
         }
       }
-    )
+    );
   },
   {
     capabilities: {
       tools: {
         toDoGenerator: {
-          description: "Handle ToDos in this application using the text that the user is providing"
-        }
+          description:
+            "Handle ToDos in this application using the text that the user is providing",
+        },
       },
     },
   },
   {
     redisUrl: process.env.REDIS_URL,
-    basePath: "/",
+    basePath: "/api",
     verboseLogs: true,
-    maxDuration: 300, 
+    maxDuration: 300,
   }
 );
 
