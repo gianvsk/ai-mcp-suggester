@@ -1,10 +1,15 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 
-const origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// Use localhost for testing, not the NEXT_PUBLIC_BASE_URL
+const origin = "https://ai-mcp-suggester.vercel.app";
+
+console.log("Using origin:", origin);
 
 async function main() {
   const transport = new SSEClientTransport(new URL(`${origin}/sse`));
+
+  console.log('transport', transport)
 
   const client = new Client(
     {
@@ -23,6 +28,7 @@ async function main() {
   await client.connect(transport);
 
   transport.onmessage = (event) => {
+    console.log('event', event)
     client.handleMessage(event.data);
     console.log("Received message", event.data);
   }

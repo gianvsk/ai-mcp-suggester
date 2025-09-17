@@ -49,6 +49,37 @@ const handler = createMcpHandler(
         }
       }
     );
+    
+    server.tool(
+      "getAllToDos",
+      "Get all the todos stored in the database",
+      {
+      },
+      async () => {
+        try {
+          const todoList = await getAllTodos();
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Fetch all the ToDos from database. The list of todos will be: ${todoList}.`,
+              },
+            ],
+          };
+        } catch (error) {
+          console.error("Error in getAllToDos:", error);
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error fetching ToDos: ${error}`,
+              },
+            ],
+          };
+        }
+      }
+    );
   },
   {
     capabilities: {
@@ -56,6 +87,10 @@ const handler = createMcpHandler(
         toDoGenerator: {
           description:
             "Handle ToDos in this application using the text that the user is providing",
+        },
+        getAllToDos: {
+          description:
+            "Get all the todos stored in the database",
         },
       },
     },
