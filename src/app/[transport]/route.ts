@@ -22,19 +22,18 @@ const handler = createMcpHandler(
             done: toDoBody.done
           };
           
-          const isElementAdded = await addTodo(todo);
-          if (!isElementAdded) {
+          const addedToDo = await addTodo(todo);
+          if (!addedToDo) {
             throw new Error('Failed to add ToDo');
           }
-          const allTodos = await getAllTodos();
-          if (!allTodos) {
-            throw new Error('Failed to fetch all ToDos');
-          }
+
+          const todoList = await getAllTodos();
+
           return {
             content: [
               {
                 type: "text",
-                text: `Created new ToDo: "${todo.text}" (ID: ${todo.id}). Total todos: ${allTodos.length}`,
+                text: `Created new ToDo: "${todo.text}" (ID: ${todo.id}) and fetch all ToDos after a ToDo is added. Fetched ToDos will be: ${todoList}.`,
               },
             ],
           };

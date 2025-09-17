@@ -2,15 +2,15 @@
 
 import { createContext, useState, useCallback, useMemo } from "react";
 import type { ToDo } from "../schemas/toDo";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuid } from "uuid";
 import { addTodo, getAllTodos } from "@/app/actions/todos";
 
 export type ListContextType = {
   list: ToDo[] | [];
   selected: ToDo[] | [];
-  addElement: (value: ToDo['id']) => void;
-  removeElement: (value: ToDo['id']) => void;
-  toggleSelection: (value: ToDo['id']) => void;
+  addElement: (value: ToDo["id"]) => void;
+  removeElement: (value: ToDo["id"]) => void;
+  toggleSelection: (value: ToDo["id"]) => void;
   fetchToDoList: () => unknown;
 };
 
@@ -22,21 +22,34 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
   const [list, setList] = useState<ToDo[]>([]);
   const [selected, setSelected] = useState<ToDo[]>([]);
 
-  const addElement = useCallback(async (value: ToDo['id']) => {
+  const addElement = useCallback(async (value: ToDo["id"]) => {
     const sanitizedValue = String(value).trim();
     if (sanitizedValue.length === 0) return;
-      const newElement: ToDo = {
-        id: uuidv4(),
-        text: sanitizedValue,
-        done: false,
-      };
-      setList(prev => [...prev, newElement]);
+    const newElement: ToDo = {
+      id: uuid(),
+      text: sanitizedValue,
+      done: false,
+    };
+
+    try {
       const addedToDo = await addTodo(newElement);
-      console.log('addedToDo', addedToDo);
+      setList(prev => [...prev, newElement]);
+
+      if (!addedToDo) {
+        setList(prev => prev.filter(el => el.id !== newElement.id));
+        throw new Error("Failed to add ToDo");
+      }
+
+      const todoList = await getAllTodos();
+      console.log("todoList", todoList);
+      setList(todoList);
+    } catch (error) {
+      console.error("Error adding todo:", error);
+    }
   }, []);
 
-  const removeElement = useCallback(async (id: ToDo['id']) => {
-/*     try {
+  const removeElement = useCallback(async (id: ToDo["id"]) => {
+    /*     try {
       const response = await fetch('/api/todos', {
         method: 'DELETE',
         headers: {
@@ -58,8 +71,8 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
     } */
   }, []);
 
-  const toggleSelection = useCallback(async (id: ToDo['id']) => {
-/*     try {
+  const toggleSelection = useCallback(async (id: ToDo["id"]) => {
+    /*     try {
       const response = await fetch('/api/todos', {
         method: 'PUT',
         headers: {
@@ -83,9 +96,9 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
     } */
   }, []);
 
-  const fetchToDoList = useCallback(async() => {
+  const fetchToDoList = useCallback(async () => {
     const fetchedTodos = await getAllTodos();
-    console.log('fetchedTodos', fetchedTodos);
+    console.log("fetchedTodos", fetchedTodos);
     setList(fetchedTodos);
   }, []);
 
@@ -96,7 +109,7 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
       addElement,
       removeElement,
       toggleSelection,
-      fetchToDoList
+      fetchToDoList,
     }),
     [list, selected, addElement, removeElement, toggleSelection, fetchToDoList]
   );

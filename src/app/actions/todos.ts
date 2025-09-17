@@ -2,12 +2,17 @@
 
 import { ToDo, todoSchema } from "@/lib/schemas/toDo";
 import redis from "@/lib/plugin/redis-client";
-import { v4 as uuid } from "uuid";
+import { revalidatePath } from "next/cache";
 
 export const addTodo = async (value: ToDo) => {
-  const id = uuid()
-  await redis.set(`todo:${id}`, JSON.stringify({ ...value }));
-  return { value };
+  const { id } = value;
+  const addedElement = await redis.set(`todo:${id}`, JSON.stringify({ ...value, id }));
+    
+  if(!addedElement) return false
+  
+  const { success } = todoSchema.safeParse(value);
+  if (!success) revalidatePath("/");
+  return success;
 };
 
 export const removeTodo = async (id: ToDo["id"]) => {
@@ -15,30 +20,30 @@ export const removeTodo = async (id: ToDo["id"]) => {
 };
 
 export const getAllTodos = async () => {
-    try {
-  await redis.keys("todo:*");
-  const keys = await redis.keys("todo:*");
+  try {
+    await redis.keys("todo:*");
+    const keys = await redis.keys("todo:*");
 
-  if (keys.length === 0) return [];
+    if (keys.length === 0) return [];
 
-  const todos = await Promise.all(
-    keys.map(async key => {
-     try {
-      const todoString = await redis.get<ToDo>(key);
+    const todos = await Promise.all(
+      keys.map(async key => {
+        try {
+          const todoString = await redis.get<ToDo>(key);
 
-      if (!todoString) return false;
+          if (!todoString) return false;
 
-      const parseResult = todoSchema.safeParse(todoString);
-      return parseResult.success ? parseResult.data : false;
-    } catch (error) {
-      console.error('Error getting single todo:', error);
-      return false
-    }
-  })
-  );
-  return todos.filter(el => !!el) || [];
+          const parseResult = todoSchema.safeParse(todoString);
+          return parseResult.success ? parseResult.data : false;
+        } catch (error) {
+          console.error("Error getting single todo:", error);
+          return false;
+        }
+      })
+    );
+    return todos.filter(el => !!el) || [];
   } catch (error) {
-    console.error('Error fetching the list of todos:', error);
+    console.error("Error fetching the list of todos:", error);
     return [];
   }
 };
