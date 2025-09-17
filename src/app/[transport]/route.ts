@@ -56,13 +56,16 @@ const handler = createMcpHandler(
         const { text, id, done } = toDoBody;
 
         try {
+
+          const todosList = await getAllTodos()
+
           await removeTodo(id);
 
           return {
             content: [
               {
                 type: "text",
-                text: `Removed a single or multiple ToDo by text, id, or done: "${text}" (ID: ${id}, Done: ${done}).`,
+                text: `Removed a single or multiple ToDo by text, id, or done: "${text}" (ID: ${id}, Done: ${done}) from the list ${todosList}.`,
               },
             ],
           };
@@ -92,11 +95,14 @@ const handler = createMcpHandler(
         try {
           await toggleTodo(id);
 
+          const todosList = await getAllTodos()
+          const updatedTodo = todosList.find(todo => todo.id === id);
+
           return {
             content: [
               {
                 type: "text",
-                text: `Toggled ToDo: "${text}" (ID: ${id}, Done: ${done}).`,
+                text: `Toggled ToDo: "${text}" (ID: ${id}). New status: ${updatedTodo ? (updatedTodo.done ? 'completed' : 'not completed') : 'unknown'}. Full todo list: ${todosList}.`,
               },
             ],
           };
@@ -126,7 +132,7 @@ const handler = createMcpHandler(
             content: [
               {
                 type: "text",
-                text: `Fetch all the ToDos from database. The list of todos will be: ${todoList}.`,
+                text: `Fetch all the ToDos from database. The list of todos will be: ${JSON.stringify(todoList, null, 2)}.`,
               },
             ],
           };
