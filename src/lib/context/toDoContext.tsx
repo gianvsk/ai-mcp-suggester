@@ -86,7 +86,7 @@ export const GeneralContext = ({ children }: { children: React.ReactNode }) => {
   const fetchToDoList = useCallback(async() => {
     const fetchedTodos = await getAllTodos();
     console.log('fetchedTodos', fetchedTodos);
-    setList(fetchedTodos || []);
+    setList(fetchedTodos);
   }, []);
 
   const context = useMemo(
