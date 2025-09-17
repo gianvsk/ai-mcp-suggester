@@ -1,13 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { List } from "../molecules/List"
 import { useToDo } from "@/app/hooks/useToDo"
 
 export const GeneratorContainer = () => {
 
     const [text, setText] = useState('')
-    const { addElement } = useToDo()
+    const { addElement, fetchToDoList } = useToDo()
+
+    useEffect(() => {
+        fetchToDoList()
+    }, [])
 
     return (
         <div className="flex flex-col gap-3 border rounded-2xl border-white/80 px-3 py-2">

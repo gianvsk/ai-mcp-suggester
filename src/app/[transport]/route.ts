@@ -1,5 +1,6 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
+import { addTodo, getAllTodos } from "@/app/actions/todos";
 
 const handler = createMcpHandler(
   server => {
@@ -13,15 +14,37 @@ const handler = createMcpHandler(
           done: z.boolean()
         }),
       },
-      ({ toDoBody }) => ({
-        content: [
-          {
-            type: "text",
-            text: `Create a new ToDo on the list, setting as object field "text" the ${toDoBody.text} and as field 
-                  "done" the value of ${toDoBody.done}`,
-          },
-        ],
-      })
+      async ({ toDoBody }) => {
+        try {
+          const todo = {
+            id: Date.now().toString(),
+            text: toDoBody.text,
+            done: toDoBody.done
+          };
+          
+          await addTodo(todo);
+          const allTodos = await getAllTodos();
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Created new ToDo: "${todo.text}" (ID: ${todo.id}). Total todos: ${allTodos.length}`,
+              },
+            ],
+          };
+        } catch (error) {
+          console.error('Error in toDoGenerator:', error);
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error creating ToDo: ${error}`,
+              },
+            ],
+          };
+        }
+      }
     )
   },
   {
