@@ -22,6 +22,11 @@ async function main() {
 
   await client.connect(transport);
 
+  transport.onmessage = (event) => {
+    client.handleMessage(event.data);
+    console.log("Received message", event.data);
+  }
+
   console.log("Connected", client.getServerCapabilities());
 
   const result = await client.listTools();
