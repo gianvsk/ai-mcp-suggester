@@ -16,7 +16,20 @@ export const addTodo = async (value: ToDo) => {
 };
 
 export const removeTodo = async (id: ToDo["id"]) => {
-  await redis.del(`todo:${id}`);
+  const response = await redis.del(`todo:${id}`);
+  return response;
+};
+
+export const toggleTodo = async (id: ToDo["id"]) => {
+  try {
+    const fetchedToDo = await redis.get<ToDo>(`todo:${id}`);
+    if (!fetchedToDo) throw new Error("ToDo not found");
+
+    const updatedTodo = { ...fetchedToDo, done: !fetchedToDo.done };
+    await redis.set(`todo:${id}`, JSON.stringify(updatedTodo));
+  } catch (error) {
+    console.error("Error toggling todo:", error);
+  }
 };
 
 export const getAllTodos = async () => {
