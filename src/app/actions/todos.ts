@@ -1,7 +1,8 @@
 "use server";
+import { z } from "zod";
 
-import { ToDo } from "@/lib/schemas/toDo";
-import redis from "@/lib/plugin/client";
+import { ToDo, todoSchema } from "@/lib/schemas/toDo";
+import redis from "@/lib/plugin/redis-client";
 
 export const addTodo = async (value: ToDo) => {
   const id = Date.now().toString();
@@ -18,11 +19,18 @@ export const getAllTodos = async () => {
   const keys = await redis.keys("todo:*");
   const todos = await Promise.all(
     keys.map(async key => {
-      const todoString: string | null = await redis.get(key);
+     try {
+      const todoString = await redis.get<ToDo>(key);
 
       if (!todoString) return null;
-      return JSON.parse(todoString);
-    })
+
+      const parseResult = todoSchema.safeParse(todoString);
+      return parseResult.success ? parseResult.data : null;
+    } catch (error) {
+      console.error('Error getting todo:', error);
+      return null;
+    }
+  }).filter(Boolean)
   );
   return todos;
 };
