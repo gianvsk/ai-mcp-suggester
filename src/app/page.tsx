@@ -1,5 +1,5 @@
 import { GeneratorContainer } from "@/components/organisms/GeneratorContainer";
-import { McpTodoClient } from "@/components/organisms/McpTodoClient";
+import { MainContainer } from "@/components/organisms/MainContainer";
 import { GeneralContext } from "@/lib/context/toDoContext";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
           
           <div>
             <h2 className="text-lg font-semibold mb-4">Nuovo Sistema (MCP Client)</h2>
-            <McpTodoClient />
+            <MainContainer />
           </div>
         </div>
       </div>

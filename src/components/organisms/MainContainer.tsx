@@ -5,11 +5,9 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { ToDo } from "@/lib/schemas/toDo";
 import { getAllTodos } from "@/app/actions/todos";
-import { v4 as uuid } from "uuid";
 
-export const McpTodoClient = () => {
+export const MainContainer = () => {
   const [todos, setTodos] = useState<ToDo[]>([]);
-  const [newTodoText, setNewTodoText] = useState("");
   const [client, setClient] = useState<Client | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isPending, startTransition] = useTransition();
